@@ -79,8 +79,6 @@ describe("DynamoDBStore", () => {
         })
         .finally(done);
     });
-<<<<<<< Updated upstream
-=======
 
     it("should store a valid expiresIn", () => {
       const store = new DynamoDBStore({
@@ -105,7 +103,6 @@ describe("DynamoDBStore", () => {
       });
       store.expiresIn.should.equal(0);
     });
->>>>>>> Stashed changes
   });
 
   describe("Initializing", () => {
