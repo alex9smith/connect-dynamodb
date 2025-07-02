@@ -37,6 +37,13 @@ declare namespace ConnectDynamoDB {
      * Useful if the table already exists or if you want to skip existence checks in a serverless environment such as AWS Lambda.
      */
     initialized?: boolean;
+    /**
+     * Set the number of seconds added to the item expiry time.
+     *
+     * Setting this to 0 will use the `maxAge` value from the session cookie.
+     * @default 0
+     */
+    expiresIn?: number;
   }
 
   interface DynamoDBStoreOptionsSpecialKey {

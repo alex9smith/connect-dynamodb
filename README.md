@@ -21,6 +21,7 @@ unless the `client` options is provided to override them.
   ☣️ Legacy reap behaviors use DynamoDB [`scan`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/scancommand.html)
   functionality that can incur significant costs. Should instead enable [DynamoDB TTL](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html)
   and select the `expires` field. TODO should we just remove it since we're already making a breaking change?
+- `expiresIn` Optional set the number of seconds for DynamoDB TTL. Defaults to the cookie's maxAge.
 
 ## Usage
 
@@ -42,6 +43,8 @@ var options = {
   ],
   // Optional skip throw missing special keys in session, if set true
   skipThrowMissingSpecialKeys: true,
+  // Optional set the number of seconds for DynamoDB TTL
+  expiresIn: 3600,
 };
 ```
 

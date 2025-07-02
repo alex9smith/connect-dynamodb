@@ -5,6 +5,7 @@ const {
   DynamoDBClient,
   CreateTableCommand,
   DeleteTableCommand,
+  GetItemCommand,
   ScalarAttributeType,
 } = require("@aws-sdk/client-dynamodb");
 const ConnectDynamoDB = require(__dirname + "/../lib/connect-dynamodb.js");
@@ -230,6 +231,40 @@ describe("DynamoDBStore", () => {
           resolve();
         });
       });
+    });
+
+    it("should set correct expiry when expiresIn option is set", async () => {
+      const storeWithExpiry = new DynamoDBStore({
+        client: client,
+        table: tableName,
+        expiresIn: 1000
+      });
+      const beforeTime = Math.floor(Date.now() / 1000);
+      
+      await new Promise((resolve, reject) => {
+        storeWithExpiry.set(
+          sessionId,
+          {
+            cookie: { maxAge: 2000 },
+            name: "test"
+          },
+          (err) => {
+            if (err) return reject(err);
+            resolve();
+          }
+        );
+      });
+
+      const result = await client.send(
+        new GetItemCommand({
+          TableName: tableName,
+          Key: { id: { S: "sess:" + sessionId } }
+        })
+      );
+      
+      const expiryValue = parseInt(result.Item.expires.N);
+      const expectedExpiry = beforeTime + 1000;
+      expiryValue.should.be.approximately(expectedExpiry, 2);
     });
   });
 
