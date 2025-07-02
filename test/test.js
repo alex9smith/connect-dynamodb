@@ -46,6 +46,16 @@ describe("DynamoDBStore", () => {
   const sessionId = Math.random().toString();
 
   describe("Instantiation", () => {
+    let consoleWarnStub;
+
+    beforeEach(() => {
+      consoleWarnStub = sinon.stub(console, 'warn');
+    })
+
+    afterEach(() => {
+      consoleWarnStub.restore();
+    })
+
     it("should be able to be created", () => {
       store.should.be.an.instanceOf(DynamoDBStore);
     });
@@ -69,6 +79,33 @@ describe("DynamoDBStore", () => {
         })
         .finally(done);
     });
+<<<<<<< Updated upstream
+=======
+
+    it("should store a valid expiresIn", () => {
+      const store = new DynamoDBStore({
+        table: "sessions-test",
+        expiresIn: 3600
+      });
+      store.expiresIn.should.equal(3600);
+    });
+
+    it("should revert expiresIn to 0 when set to a non-integer", () => {
+      const store = new DynamoDBStore({
+        table: "sessions-test",
+        expiresIn: 1.5
+      });
+      store.expiresIn.should.equal(0);
+    });
+
+    it("should revert expiresIn to 0 when set to a negative integer", () => {
+      const store = new DynamoDBStore({
+        table: "sessions-test",
+        expiresIn: -10
+      });
+      store.expiresIn.should.equal(0);
+    });
+>>>>>>> Stashed changes
   });
 
   describe("Initializing", () => {
@@ -174,6 +211,16 @@ describe("DynamoDBStore", () => {
   });
 
   describe("Setting", () => {
+    let clock;
+
+    beforeEach(() => {
+      clock = sinon.useFakeTimers(1000000000);
+    })
+
+    afterEach(() => {
+      clock.restore();
+    })
+
     it("should store data correctly", async () => {
       return new Promise((resolve, reject) => {
         const name = Math.random().toString();
@@ -239,7 +286,6 @@ describe("DynamoDBStore", () => {
         table: tableName,
         expiresIn: 1000
       });
-      const beforeTime = Math.floor(Date.now() / 1000);
       
       await new Promise((resolve, reject) => {
         storeWithExpiry.set(
@@ -263,8 +309,7 @@ describe("DynamoDBStore", () => {
       );
       
       const expiryValue = parseInt(result.Item.expires.N);
-      const expectedExpiry = beforeTime + 1000;
-      expiryValue.should.be.approximately(expectedExpiry, 2);
+      expiryValue.should.equal(1000000 + 1000);
     });
   });
 
